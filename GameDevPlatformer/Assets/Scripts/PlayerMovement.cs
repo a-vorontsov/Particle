@@ -11,53 +11,56 @@ public class PlayerMovement : MonoBehaviour {
 	public float wallStickTime = 0.05f;
 	public float timeToWallUnstick;
 
-	public Vector2 wallClimb;
 	public Vector2 wallHop;
 	public Vector2 wallLeap;
 
-	float accelerationTimeAirborne = 0.2f;
 	float accelerationTimeGrounded = 0.1f;
-	float moveSpeed = 6;
+	float moveSpeed = 5;
+	float minMoveSpeed = 5;
 	float gravity;
 	float jumpVelocity;
 	float velocityXSmoothing;
 
-	int doubleJump = 0;
-
-	bool wallSliding = false;
-	bool canWallSlide = true;
-
 	Vector2 velocity;
 	Controller2D controller;
 
-	// Use this for initialization
+	IEnumerator Wait() {
+		yield return new WaitForSeconds (2f);
+	}
+
 	void Start () {
 		controller = GetComponent<Controller2D> ();
 		// calculate gravity and jump strength
 		gravity = -(2 * jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
 	}
-
-	public IEnumerator stopWallSlide() {
-		yield return new WaitForSeconds (0.5f);
-		wallSliding = false;
-		canWallSlide = false;
-		yield return new WaitUntil(() => controller.collisions.below || controller.collisions.left || controller.collisions.right);
-		canWallSlide = true;
-	}
-
-	// Update is called once per frame
+		
 	void Update () {
+		print (velocity.x);
 		// Movement input
 		Vector2 input = new Vector2 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical"));
 		int wallDirectionX = (controller.collisions.left) ? -1 : 1;
+		float targetVelocityXGround = input.x * moveSpeed;
+		// Reduce horizontal acceleration on ground after waiting
+		if (controller.collisions.below) {
+			
+			StartCoroutine (Wait ());
+			velocity.x = Mathf.SmoothDamp (velocity.x, targetVelocityXGround, ref velocityXSmoothing, accelerationTimeGrounded);
+		} 
+		// Accelerate while airbourne
+		else {
+			if (velocity.x > 0) {
+				velocity.x += 10 * Time.deltaTime;
+			} 
+			else if (velocity.x < 0) {
+				velocity.x -= 10 * Time.deltaTime;
+			}
+		}
 
-		float targetVelocityX = input.x * moveSpeed;
-		// Reduce horizontal acceleration in mid air
-		velocity.x = Mathf.SmoothDamp (velocity.x, targetVelocityX, ref velocityXSmoothing, (controller.collisions.below) ? accelerationTimeGrounded : accelerationTimeAirborne);
-
-		if ((controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0 && canWallSlide == true) {
+		bool wallSliding = false;
+		if ((controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
 			wallSliding = true;
+
 			if (velocity.y < -wallSlideSpeedMax) {
 				velocity.y = -wallSlideSpeedMax;
 			}
@@ -65,6 +68,7 @@ public class PlayerMovement : MonoBehaviour {
 			if (timeToWallUnstick > 0) {
 				velocityXSmoothing = 0;
 				velocity.x = 0;
+
 				if (input.x != wallDirectionX && input.x != 0) {
 					timeToWallUnstick -= Time.deltaTime;
 				} 
@@ -75,45 +79,39 @@ public class PlayerMovement : MonoBehaviour {
 			else {
 				timeToWallUnstick = wallStickTime;
 			}
-			StartCoroutine (stopWallSlide ());
 		}
 
-		// Stop gravity build up while grounded
+		// Stop gravity build up while grounded and decelerate fast
 		if (controller.collisions.above || controller.collisions.below) {
 			velocity.y = 0;
+			if (velocity.x < -minMoveSpeed) {
+				velocity.x += 5 * Time.deltaTime;
+			} 
+			else if (velocity.x > minMoveSpeed) {
+				velocity.x -= 5 * Time.deltaTime;
+			}
 		}
+				
 
 		// Jump and double jump input and check
 		if (Input.GetKeyDown (KeyCode.Space)) {
+			velocity.x += 10 * Time.deltaTime;
 			if (wallSliding) {
-				if (wallDirectionX == -input.x) {
-					velocity.x = -wallDirectionX * wallLeap.x;
-					velocity.y = wallLeap.y;
-					doubleJump = 2;
-					canWallSlide = true;
-				} 
-				else {
+				if ( wallDirectionX == 0) {
 					velocity.x = -wallDirectionX * wallHop.x;
 					velocity.y = wallHop.y;
-					doubleJump = 2;
-					canWallSlide = true;
+				}
+				else {
+					velocity.x = -wallDirectionX * wallLeap.x;
+					velocity.y = wallLeap.y;
 				} 
 			}
-			//Recalculate gravity and jump strength mid air
-			if (doubleJump != 2) {
-				gravity = -(2 * jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
-				jumpVelocity = Mathf.Abs (gravity) * timeToJumpApex;
+
+			if (controller.collisions.below) {
 				velocity.y = jumpVelocity;
-				doubleJump += 1;
-				jumpHeight = 1.5f;
 			}
 		}
 
-		// Double jump reset on landing
-		if (controller.collisions.below && velocity.y == 0) {
-			doubleJump = 0;
-			jumpHeight = 2;
-		}
 			
 		velocity.y += gravity * Time.deltaTime;
 		controller.Move (velocity * Time.deltaTime);
