@@ -27,42 +27,50 @@ public class PlayerMovement : MonoBehaviour {
 
 	void Start () {
 		controller = GetComponent<Controller2D> ();
-		// calculate gravity and jump strength
+		// Calculate gravity and jump strength
 		gravity = -(2 * jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
 	}
-
-	IEnumerator GroundTime() {
-		if (controller.collisions.below) {
-			Vector2 input = new Vector2 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical"));
-			Debug.Log (timeToGroundDecelerate);
-			yield return new WaitUntil (() => timeToGroundDecelerate == 2);
-			timeToGroundDecelerate += Time.deltaTime;
-			velocity.x = Mathf.SmoothDamp (velocity.x, (input.x * moveSpeed), ref velocityXSmoothing, accelerationTimeGrounded);
-
-		}
-	}
 		
 	void Update () {
+		Debug.Log (velocity.x);
 		// Movement input
 		Vector2 input = new Vector2 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical"));
 		int wallDirectionX = (controller.collisions.left) ? -1 : 1;
 		float targetVelocityXGround = input.x * moveSpeed;
 		// Reduce horizontal acceleration on ground after waiting
 		if (controller.collisions.below) {
-			if (timeToGroundDecelerate != 2) {
-				StartCoroutine (GroundTime ());
+			if (input.x == 1) {
+				velocity.x += 100 * Mathf.Pow(Time.deltaTime, 2);
 			} 
-			velocity.x = Mathf.SmoothDamp (velocity.x, targetVelocityXGround, ref velocityXSmoothing, accelerationTimeGrounded);
-		} 
-
-		// Accelerate while airbourne
-		else {
+			else if (input.x == -1) {
+				velocity.x -= (100 * Mathf.Pow(Time.deltaTime, 2));
+			}
+			if (timeToGroundDecelerate < 0.25f) {
+				timeToGroundDecelerate += Time.deltaTime;
+			} 
+			else if (timeToGroundDecelerate >= 0.25f) {
+				velocity.x = Mathf.SmoothDamp (velocity.x, targetVelocityXGround, ref velocityXSmoothing, accelerationTimeGrounded);
+			}
+		}
+		// Accelerate while airborne and slow down when input is opposite to movement
+		else if (!controller.collisions.below) {
+			timeToGroundDecelerate = 0;
 			if (velocity.x > 0) {
-				velocity.x += 10 * Time.deltaTime;
+				if (input.x == 1) {
+					velocity.x += 10 * Time.deltaTime;
+				} 
+				else if (input.x == -1) {
+					velocity.x -= 20 * Time.deltaTime;
+				}
 			} 
 			else if (velocity.x < 0) {
-				velocity.x -= 10 * Time.deltaTime;
+				if (input.x == 1) {
+					velocity.x += 20 * Time.deltaTime;
+				} 
+				else if (input.x == -1) {
+					velocity.x -= 10 * Time.deltaTime;
+				}
 			}
 		}
 
@@ -70,10 +78,12 @@ public class PlayerMovement : MonoBehaviour {
 		if ((controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
 			wallSliding = true;
 
+			// Force vertical velocity limit
 			if (velocity.y < -wallSlideSpeedMax) {
 				velocity.y = -wallSlideSpeedMax;
 			}
 
+			// Give time for player to decide when to jump
 			if (timeToWallUnstick > 0) {
 				velocityXSmoothing = 0;
 				velocity.x = 0;
@@ -100,12 +110,9 @@ public class PlayerMovement : MonoBehaviour {
 				velocity.x -= 5 * Time.deltaTime;
 			}
 		}
-				
-		Debug.Log (input.x);
 
-		// Jump and double jump input and check
+		// Jump input and check if wallsliding or if on ground
 		if (Input.GetKeyDown (KeyCode.Space)) {
-			velocity.x += Mathf.Sign(input.x) * Mathf.Pow(Time.deltaTime, 2);
 			if (wallSliding) {
 				if ( wallDirectionX == 0) {
 					velocity.x = -wallDirectionX * wallHop.x;
@@ -121,7 +128,6 @@ public class PlayerMovement : MonoBehaviour {
 				velocity.y = jumpVelocity;
 			}
 		}
-
 			
 		velocity.y += gravity * Time.deltaTime;
 		controller.Move (velocity * Time.deltaTime);

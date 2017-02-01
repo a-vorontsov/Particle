@@ -37,6 +37,7 @@ public class Controller2D : RayCastController {
 		transform.Translate (velocity);
 	}
 
+	// Detect horizontal collisions
 	void HorizontalCollisions(ref Vector2 velocity) {
 		float directionX = collisions.faceDirection;
 		float rayLength = Mathf.Abs (velocity.x) + skinWidth;
@@ -79,6 +80,7 @@ public class Controller2D : RayCastController {
 		}
 	}
 
+	// Detect vertical collisions
 	void VerticalCollisions(ref Vector2 velocity) {
 		float directionY = Mathf.Sign (velocity.y);
 		float rayLength = Mathf.Abs (velocity.y) + skinWidth;
@@ -91,6 +93,7 @@ public class Controller2D : RayCastController {
 			if (hit) {
 				velocity.y = (hit.distance - skinWidth) * directionY;
 				rayLength = hit.distance;
+
 				if (collisions.climbingSlope) {
 					velocity.x = velocity.y / Mathf.Tan (collisions.slopeAngle * Mathf.Deg2Rad) * Mathf.Sign (velocity.x);
 				}
@@ -99,11 +102,13 @@ public class Controller2D : RayCastController {
 				collisions.above = directionY == 1;
 			}
 		}
+
 		if (collisions.climbingSlope) {
 			float directionX = Mathf.Sign (velocity.x);
 			rayLength = Mathf.Abs (velocity.x) + skinWidth;
 			Vector2 rayOrigin = ((directionX == -1)?raycastOrigins.bottomLeft:raycastOrigins.bottomRight) + Vector2.up * velocity.y;
 			RaycastHit2D hit = Physics2D.Raycast(rayOrigin, Vector2.right * directionX, rayLength, collisionMask);
+
 			if (hit) {
 				float slopeAngle = Vector2.Angle(hit.normal, Vector2.up);
 				if (slopeAngle != collisions.slopeAngle) {
@@ -114,6 +119,7 @@ public class Controller2D : RayCastController {
 		}
 	}
 
+	// Reduce jittering on slope ascent
 	void ClimbSlope (ref Vector2 velocity, float slopeAngle) {
 		float moveDistance = Mathf.Abs (velocity.x);
 		float climbVelocityY = Mathf.Sin (slopeAngle * Mathf.Deg2Rad) * moveDistance;
@@ -128,6 +134,7 @@ public class Controller2D : RayCastController {
 		}
 	}
 
+	// Reduce jittering on slope descent
 	void DescendSlope (ref Vector2 velocity) {
 		float directionX = Mathf.Sign (velocity.x);
 
