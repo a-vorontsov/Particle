@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour {
 	public float jumpHeight = 2;
 	public float timeToJumpApex = 0.3f;
 	public float wallSlideSpeedMax = 0;
-	public float wallStickTime = 0.05f;
+	public float wallStickTime = 0.1f;
 	public float timeToWallUnstick;
 	public float timeToGroundDecelerate;
 
@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour {
 	public Vector2 wallLeap;
 
 	float accelerationTimeGrounded = 0.1f;
+	float accelerationTimeLanding = 0.3f;
 	float moveSpeed = 10;
 	float minMoveSpeed = 10;
 	float gravity;
@@ -47,8 +48,13 @@ public class PlayerMovement : MonoBehaviour {
 				velocity.x -= (100 * Mathf.Pow(Time.deltaTime, 2));
 			}
 			if (timeToGroundDecelerate < 0.25f) {
-				timeToGroundDecelerate += Time.deltaTime;
-			} 
+				if (Mathf.Sign (input.x) != Mathf.Sign (velocity.x)) {
+					velocity.x = Mathf.SmoothDamp (velocity.x, targetVelocityXGround, ref velocityXSmoothing, accelerationTimeLanding);
+				} 
+				else {
+					timeToGroundDecelerate += Time.deltaTime;
+				}
+			}
 			else if (timeToGroundDecelerate >= 0.25f) {
 				velocity.x = Mathf.SmoothDamp (velocity.x, targetVelocityXGround, ref velocityXSmoothing, accelerationTimeGrounded);
 			}
@@ -88,7 +94,7 @@ public class PlayerMovement : MonoBehaviour {
 				velocityXSmoothing = 0;
 				velocity.x = 0;
 
-				if (input.x != wallDirectionX && input.x != 0) {
+				if (input.x != wallDirectionX) {
 					timeToWallUnstick -= Time.deltaTime;
 				} 
 				else {
@@ -114,7 +120,7 @@ public class PlayerMovement : MonoBehaviour {
 		// Jump input and check if wallsliding or if on ground
 		if (Input.GetKeyDown (KeyCode.Space)) {
 			if (wallSliding) {
-				if ( wallDirectionX == 0) {
+				if (input.x == 0) {
 					velocity.x = -wallDirectionX * wallHop.x;
 					velocity.y = wallHop.y;
 				}
