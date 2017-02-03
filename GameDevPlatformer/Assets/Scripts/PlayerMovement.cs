@@ -8,12 +8,13 @@ public class PlayerMovement : MonoBehaviour {
 	public float jumpHeight = 2;
 	public float timeToJumpApex = 0.3f;
 	public float wallSlideSpeedMax = 0;
-	public float wallStickTime = 0.1f;
+	public float wallStickTime = 0;
 	public float timeToWallUnstick;
 	public float timeToGroundDecelerate;
 
 	public Vector2 wallHop;
 	public Vector2 wallLeap;
+	public Vector2 wallClimb;
 
 	float accelerationTimeGrounded = 0.1f;
 	float accelerationTimeLanding = 0.3f;
@@ -64,18 +65,18 @@ public class PlayerMovement : MonoBehaviour {
 			timeToGroundDecelerate = 0;
 			if (velocity.x > 0) {
 				if (input.x == 1) {
-					velocity.x += 10 * Time.deltaTime;
+					velocity.x += 20 * Time.deltaTime;
 				} 
 				else if (input.x == -1) {
-					velocity.x -= 20 * Time.deltaTime;
+					velocity.x -= 40 * Time.deltaTime;
 				}
 			} 
 			else if (velocity.x < 0) {
 				if (input.x == 1) {
-					velocity.x += 20 * Time.deltaTime;
+					velocity.x += 40 * Time.deltaTime;
 				} 
 				else if (input.x == -1) {
-					velocity.x -= 10 * Time.deltaTime;
+					velocity.x -= 20 * Time.deltaTime;
 				}
 			}
 		}
@@ -86,23 +87,7 @@ public class PlayerMovement : MonoBehaviour {
 
 			// Force vertical velocity limit
 			if (velocity.y < -wallSlideSpeedMax) {
-				velocity.y = -wallSlideSpeedMax;
-			}
-
-			// Give time for player to decide when to jump
-			if (timeToWallUnstick > 0) {
-				velocityXSmoothing = 0;
-				velocity.x = 0;
-
-				if (input.x != wallDirectionX) {
-					timeToWallUnstick -= Time.deltaTime;
-				} 
-				else {
-					timeToWallUnstick = wallStickTime;
-				}
-			} 
-			else {
-				timeToWallUnstick = wallStickTime;
+				velocity.y = wallSlideSpeedMax;
 			}
 		}
 
@@ -123,11 +108,15 @@ public class PlayerMovement : MonoBehaviour {
 				if (input.x == 0) {
 					velocity.x = -wallDirectionX * wallHop.x;
 					velocity.y = wallHop.y;
-				}
-				else {
+				} 
+				else if (input.x != wallDirectionX) {
 					velocity.x = -wallDirectionX * wallLeap.x;
 					velocity.y = wallLeap.y;
 				} 
+				else if (input.x == wallDirectionX) {
+					velocity.x = -wallDirectionX * wallClimb.x;
+					velocity.y = wallClimb.y;
+				}
 			}
 
 			if (controller.collisions.below) {
