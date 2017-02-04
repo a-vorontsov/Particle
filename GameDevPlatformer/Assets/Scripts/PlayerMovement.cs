@@ -136,14 +136,13 @@ public class PlayerMovement : MonoBehaviour {
 		controller.Move (velocity * Time.deltaTime);
 
 		// Respawn player after falling 50 units below spawn or after pressing R
-		bool resetting = false;
 		if ((this.transform.position.y < (spawnPoint.y - 50)) || Input.GetKeyDown (KeyCode.R)) {
-			resetting = true;
 			StartCoroutine (timerWait (2));
 			this.transform.position = spawnPoint;
 			// Reset velocity to prevent abuse
 			velocity.x = 0;
 			velocity.y = 0;
+			trail.enabled = false;
 		}
 
 		// Trail distance change on velocity change
@@ -155,13 +154,8 @@ public class PlayerMovement : MonoBehaviour {
 				trail.time = 0.25f;
 			}
 		} 
-		// Disable trail when resetting player position
-		else if (resetting = true) {
-			trail.enabled = false;
-		}
 		// Reduce trail length when slow
 		else {
-			StartCoroutine (timerWait (1));
 			if (trail.time > 0) {
 				trail.time -= 0.01f;
 			}
