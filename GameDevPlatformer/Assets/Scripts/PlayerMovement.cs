@@ -15,6 +15,7 @@ public class PlayerMovement : MonoBehaviour {
 	public Vector2 wallHop;
 	public Vector2 wallLeap;
 	public Vector2 wallClimb;
+	public Vector2 spawnPoint;
 
 	float accelerationTimeGrounded = 0.1f;
 	float accelerationTimeLanding = 0.3f;
@@ -26,12 +27,19 @@ public class PlayerMovement : MonoBehaviour {
 
 	Vector2 velocity;
 	Controller2D controller;
+	TrailRenderer trail;
+
+	public IEnumerator timerWait(float waitTime) {
+		yield return new WaitForSeconds (waitTime);
+	}
 
 	void Start () {
 		controller = GetComponent<Controller2D> ();
+		trail = gameObject.gameObject.GetComponent<TrailRenderer> ();
 		// Calculate gravity and jump strength
 		gravity = -(2 * jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
+		spawnPoint = this.transform.position;
 	}
 		
 	void Update () {
@@ -126,5 +134,40 @@ public class PlayerMovement : MonoBehaviour {
 			
 		velocity.y += gravity * Time.deltaTime;
 		controller.Move (velocity * Time.deltaTime);
+
+		// Respawn player after falling 50 units below spawn or after pressing R
+		bool resetting = false;
+		if ((this.transform.position.y < (spawnPoint.y - 50)) || Input.GetKeyDown (KeyCode.R)) {
+			resetting = true;
+			StartCoroutine (timerWait (2));
+			this.transform.position = spawnPoint;
+			// Reset velocity to prevent abuse
+			velocity.x = 0;
+			velocity.y = 0;
+		}
+
+		// Trail distance change on velocity change
+		if (velocity.x > 10 || velocity.x < -10 || velocity.y > 10 || velocity.y < -10) {
+			trail.enabled = true;
+			if (trail.time < 0.25f) {
+				trail.time += 0.01f;
+			} else {
+				trail.time = 0.25f;
+			}
+		} 
+		// Disable trail when resetting player position
+		else if (resetting = true) {
+			trail.enabled = false;
+		}
+		// Reduce trail length when slow
+		else {
+			StartCoroutine (timerWait (1));
+			if (trail.time > 0) {
+				trail.time -= 0.01f;
+			}
+			else {
+				trail.time = 0;
+			}
+		}
 	}
 }
