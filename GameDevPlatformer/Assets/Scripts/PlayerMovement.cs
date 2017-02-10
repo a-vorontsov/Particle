@@ -33,6 +33,12 @@ public class PlayerMovement : MonoBehaviour {
 		yield return new WaitForSeconds (waitTime);
 	}
 
+	void OnTriggerEnter (Collider collisions){
+		if (collisions.name == "Teleport"){
+			this.gameObject.transform.position = new Vector2 (14, -8.5f);
+		}
+	}
+
 	void Start () {
 		controller = GetComponent<Controller2D> ();
 		trail = gameObject.gameObject.GetComponent<TrailRenderer> ();
