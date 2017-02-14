@@ -16,6 +16,7 @@ public class PlayerMovement : MonoBehaviour {
 	public Vector2 wallLeap;
 	public Vector2 wallClimb;
 	public Vector2 spawnPoint;
+	public Vector2 velocity;
 
 	float accelerationTimeGrounded = 0.1f;
 	float accelerationTimeLanding = 0.3f;
@@ -25,31 +26,24 @@ public class PlayerMovement : MonoBehaviour {
 	float jumpVelocity;
 	float velocityXSmoothing;
 
-	Vector2 velocity;
 	Controller2D controller;
 	TrailRenderer trail;
-
-	public IEnumerator timerWait(float waitTime) {
-		yield return new WaitForSeconds (waitTime);
-	}
-
-	void OnTriggerEnter (Collider collisions){
-		if (collisions.name == "Teleport"){
-			this.gameObject.transform.position = new Vector2 (14, -8.5f);
-		}
-	}
+	SpriteRenderer renderer;
+	TeleportScript teleport;
+	GameObject player;
 
 	void Start () {
+		teleport = GameObject.FindObjectOfType<TeleportScript> ();
+		renderer = GetComponent<SpriteRenderer> ();
 		controller = GetComponent<Controller2D> ();
-		trail = gameObject.gameObject.GetComponent<TrailRenderer> ();
+		trail = GetComponent<TrailRenderer> ();
 		// Calculate gravity and jump strength
 		gravity = -(2 * jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
-		spawnPoint = this.transform.position;
+		spawnPoint = new Vector2 (spawnPoint.x, spawnPoint.y);
 	}
 		
 	void Update () {
-		Debug.Log (velocity.x);
 		// Movement input
 		Vector2 input = new Vector2 (Input.GetAxisRaw ("Horizontal"), Input.GetAxisRaw ("Vertical"));
 		int wallDirectionX = (controller.collisions.left) ? -1 : 1;
@@ -116,8 +110,13 @@ public class PlayerMovement : MonoBehaviour {
 			}
 		}
 
+		// stop velocity build up while colliding with a wall
+		if (controller.collisions.left || controller.collisions.right) {
+			velocity.x = 0;
+		}
+
 		// Jump input and check if wallsliding or if on ground
-		if (Input.GetKeyDown (KeyCode.Space)) {
+		if (Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow)) {
 			if (wallSliding) {
 				if (input.x == 0) {
 					velocity.x = -wallDirectionX * wallHop.x;
@@ -137,18 +136,21 @@ public class PlayerMovement : MonoBehaviour {
 				velocity.y = jumpVelocity;
 			}
 		}
-			
+
+		// Make Player move
 		velocity.y += gravity * Time.deltaTime;
 		controller.Move (velocity * Time.deltaTime);
 
 		// Respawn player after falling 50 units below spawn or after pressing R
 		if ((this.transform.position.y < (spawnPoint.y - 50)) || Input.GetKeyDown (KeyCode.R)) {
-			StartCoroutine (timerWait (2));
 			this.transform.position = spawnPoint;
 			// Reset velocity to prevent abuse
 			velocity.x = 0;
 			velocity.y = 0;
+			// Disable trail
+			teleport.teleporting = false;;
 			trail.enabled = false;
+			this.renderer.enabled = true;
 		}
 
 		// Trail distance change on velocity change
@@ -156,18 +158,30 @@ public class PlayerMovement : MonoBehaviour {
 			trail.enabled = true;
 			if (trail.time < 0.25f) {
 				trail.time += 0.01f;
-			} else {
+			} 
+			else {
 				trail.time = 0.25f;
 			}
 		} 
+
 		// Reduce trail length when slow
 		else {
 			if (trail.time > 0) {
 				trail.time -= 0.01f;
 			}
 			else {
-				trail.time = 0;
+				trail.enabled = false;
 			}
+		}
+
+		// Make player (in)visible while teleporting
+		if (teleport.teleporting) {
+			this.renderer.enabled = false;
+			trail.enabled = false;
+		} 
+		else if (!teleport.teleporting) {
+			this.renderer.enabled = true;
+			trail.enabled = true;
 		}
 	}
 }
