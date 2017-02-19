@@ -6,7 +6,7 @@ public class TeleportScript : MonoBehaviour {
 
 	public GameObject player;
 
-	Vector2 destination;
+	public Vector2 destination;
 
 	public float countdownTimer;
 
@@ -24,7 +24,6 @@ public class TeleportScript : MonoBehaviour {
 			// Begin timer
 			if (countdownTimer > 0) {
 				countdownTimer -= Time.deltaTime;
-				Debug.Log (countdownTimer);
 			}
 			//Teleport after timer drops below 0
 			else if (countdownTimer <= 0) {

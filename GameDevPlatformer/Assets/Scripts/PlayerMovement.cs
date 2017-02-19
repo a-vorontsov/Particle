@@ -111,7 +111,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// stop velocity build up while colliding with a wall
-		if (controller.collisions.left || controller.collisions.right) {
+		if ((controller.collisions.left || controller.collisions.right) && !controller.collisions.below) {
 			velocity.x = 0;
 		}
 
@@ -149,7 +149,7 @@ public class PlayerMovement : MonoBehaviour {
 			velocity.y = 0;
 			// Disable trail
 			teleport.teleporting = false;;
-			trail.enabled = false;
+			trail.time = 0;
 			this.renderer.enabled = true;
 		}
 
@@ -177,7 +177,7 @@ public class PlayerMovement : MonoBehaviour {
 		// Make player (in)visible while teleporting
 		if (teleport.teleporting) {
 			this.renderer.enabled = false;
-			trail.enabled = false;
+			trail.time = 0;
 		} 
 		else if (!teleport.teleporting) {
 			this.renderer.enabled = true;
