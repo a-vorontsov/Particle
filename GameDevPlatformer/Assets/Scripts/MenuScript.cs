@@ -6,7 +6,7 @@ public class MenuScript : MonoBehaviour {
 
 	// Start game on press
 	public void StartGame() {
-		Application.LoadLevel ("platformer");
+		Application.LoadLevel ("platformer 1");
 	}
 
 	// Quit game on press (doesn't function in unity editor)

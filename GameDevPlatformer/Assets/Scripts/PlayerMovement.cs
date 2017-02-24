@@ -154,7 +154,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// Trail distance change on velocity change
-		if (velocity.x + velocity.y > 10 || velocity.x + velocity.y < -10 ) {
+		if (velocity.x > 10 || velocity.x < -10  || velocity.y > 10 || velocity.y < -10) {
 			trail.enabled = true;
 			if (trail.time < 0.25f) {
 				trail.time += 0.01f;
