@@ -15,14 +15,14 @@ public class TimerScript : MonoBehaviour {
 
 	void Start () {
 	}
-		
+
     void Update () {
         float time = 0;
         string minutes = ((int)time / 60).ToString();
         string seconds = (time % 60).ToString("f2");
 
 		// Detect if player has moved horizontally
-		if (Input.GetKeyDown(KeyCode.LeftArrow)  || Input.GetKeyDown(KeyCode.RightArrow)) {
+		if (Input.GetKeyDown(KeyCode.LeftArrow)  || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) {
             if (FirstPress) {
                 TimerStart = true;
                 initialTime = Time.time;

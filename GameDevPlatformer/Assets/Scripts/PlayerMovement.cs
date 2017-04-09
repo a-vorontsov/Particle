@@ -6,41 +6,45 @@ using UnityEngine;
 public class PlayerMovement : MonoBehaviour {
 
 	public float jumpHeight = 2;
+	public float timeToGroundDecelerate;
 	public float timeToJumpApex = 0.3f;
+	public float timeToWallUnstick;
 	public float wallSlideSpeedMax = 0;
 	public float wallStickTime = 0;
-	public float timeToWallUnstick;
-	public float timeToGroundDecelerate;
 
-	public Vector2 wallHop;
-	public Vector2 wallLeap;
-	public Vector2 wallClimb;
 	public Vector2 spawnPoint;
 	public Vector2 velocity;
+	public Vector2 wallClimb;
+	public Vector2 wallHop;
+	public Vector2 wallLeap;
 
 	float accelerationTimeGrounded = 0.1f;
 	float accelerationTimeLanding = 0.3f;
-	float moveSpeed = 10;
-	float minMoveSpeed = 10;
 	float gravity;
 	float jumpVelocity;
+	float minMoveSpeed = 10;
+	float moveSpeed;
 	float velocityXSmoothing;
 
+	AccelerateScript accelerate;
 	Controller2D controller;
-	TrailRenderer trail;
+	GameObject player;
 	SpriteRenderer renderer;
 	TeleportScript teleport;
-	GameObject player;
+	TrailRenderer trail;
 
 	void Start () {
-		teleport = GameObject.FindObjectOfType<TeleportScript> ();
-		renderer = GetComponent<SpriteRenderer> ();
+		accelerate = GameObject.FindObjectOfType<AccelerateScript> ();
 		controller = GetComponent<Controller2D> ();
+		renderer = GetComponent<SpriteRenderer> ();
+		teleport = GameObject.FindObjectOfType<TeleportScript> ();
 		trail = GetComponent<TrailRenderer> ();
+
 		// Calculate gravity and jump strength
 		gravity = -(2 * jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
 		jumpVelocity = Mathf.Abs(gravity) * timeToJumpApex;
 		spawnPoint = new Vector2 (spawnPoint.x, spawnPoint.y);
+		moveSpeed = 10;
 	}
 		
 	void Update () {
@@ -182,6 +186,14 @@ public class PlayerMovement : MonoBehaviour {
 		else if (!teleport.teleporting) {
 			this.renderer.enabled = true;
 			trail.enabled = true;
+		}
+
+		// Accelerate player when in zone
+		if (accelerate.accelerating) {
+			moveSpeed = moveSpeed + 1;
+		}
+		else if (!accelerate.accelerating) {
+			moveSpeed = 10;
 		}
 	}
 }
