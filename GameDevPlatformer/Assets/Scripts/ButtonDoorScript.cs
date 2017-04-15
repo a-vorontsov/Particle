@@ -19,6 +19,7 @@ public class ButtonDoorScript : MonoBehaviour {
 		this.renderer.color = new Color(255, 255, 0, 255);
 	}
 	
+	// Change button colour and door position on player collision
 	void OnTriggerEnter2D (Collider2D col){
 		if (col.gameObject.name == "Player 1") {
 			activated = true;
@@ -28,7 +29,7 @@ public class ButtonDoorScript : MonoBehaviour {
 	}
 
 	void Update () {
-		// Reset buttons/doors on death/key down
+		// Reset buttons/doors on level reset
 		if (Input.GetKeyDown (KeyCode.R)){
 			door.transform.position = originalLocation;
 			activated = false;

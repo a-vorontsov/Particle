@@ -16,7 +16,7 @@ public class Controller2D : RayCastController {
 		collisions.faceDirection = 1;
 	}
 
-	public void Move(Vector2 velocity) {
+	public void Move (Vector2 velocity) {
 		UpdateRaycastOrigins ();
 		collisions.Reset ();
 
@@ -38,7 +38,7 @@ public class Controller2D : RayCastController {
 	}
 
 	// Detect horizontal collisions
-	void HorizontalCollisions(ref Vector2 velocity) {
+	void HorizontalCollisions (ref Vector2 velocity) {
 		float directionX = collisions.faceDirection;
 		float rayLength = Mathf.Abs (velocity.x) + skinWidth;
 
@@ -81,7 +81,7 @@ public class Controller2D : RayCastController {
 	}
 
 	// Detect vertical collisions
-	void VerticalCollisions(ref Vector2 velocity) {
+	void VerticalCollisions (ref Vector2 velocity) {
 		float directionY = Mathf.Sign (velocity.y);
 		float rayLength = Mathf.Abs (velocity.y) + skinWidth;
 

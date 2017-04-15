@@ -9,7 +9,6 @@ public class TimerScript : MonoBehaviour {
 
     float initialTime;
 
-    bool isFinished = false;
     bool TimerStart = false;
     bool FirstPress = true;
 

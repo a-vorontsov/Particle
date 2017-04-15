@@ -11,6 +11,8 @@ public class PlayerMovement : MonoBehaviour {
 	public float timeToWallUnstick;
 	public float wallSlideSpeedMax = 0;
 	public float wallStickTime = 0;
+	public float minYPosition;
+	public float moveSpeed;
 
 	public Vector2 spawnPoint;
 	public Vector2 velocity;
@@ -23,18 +25,23 @@ public class PlayerMovement : MonoBehaviour {
 	float gravity;
 	float jumpVelocity;
 	float minMoveSpeed = 10;
-	float moveSpeed;
 	float velocityXSmoothing;
 
 	AccelerateScript accelerate;
+	DecelerateScript decelerate;
 	Controller2D controller;
 	GameObject player;
 	SpriteRenderer renderer;
 	TeleportScript teleport;
 	TrailRenderer trail;
+	PauseScript pause;
+	LevelAdvanceScript levelAdvance;
 
 	void Start () {
+		pause = GameObject.FindObjectOfType<PauseScript> ();
+		levelAdvance = GameObject.FindObjectOfType<LevelAdvanceScript> ();
 		accelerate = GameObject.FindObjectOfType<AccelerateScript> ();
+		decelerate = GameObject.FindObjectOfType<DecelerateScript> ();
 		controller = GetComponent<Controller2D> ();
 		renderer = GetComponent<SpriteRenderer> ();
 		teleport = GameObject.FindObjectOfType<TeleportScript> ();
@@ -146,7 +153,7 @@ public class PlayerMovement : MonoBehaviour {
 		controller.Move (velocity * Time.deltaTime);
 
 		// Respawn player after falling 50 units below spawn or after pressing R
-		if ((this.transform.position.y < (spawnPoint.y - 50)) || Input.GetKeyDown (KeyCode.R)) {
+		if ((this.transform.position.y < (minYPosition)) || Input.GetKeyDown (KeyCode.R)) {
 			this.transform.position = spawnPoint;
 			// Reset velocity to prevent abuse
 			velocity.x = 0;
@@ -182,18 +189,41 @@ public class PlayerMovement : MonoBehaviour {
 		if (teleport.teleporting) {
 			this.renderer.enabled = false;
 			trail.time = 0;
+			velocity.x = 0;
 		} 
 		else if (!teleport.teleporting) {
 			this.renderer.enabled = true;
 			trail.enabled = true;
 		}
 
-		// Accelerate player when in zone
-		if (accelerate.accelerating) {
+		// Accelerate player when in zone and moving
+		if (accelerate.accelerating && (input.x != 0)) {
 			moveSpeed = moveSpeed + 1;
 		}
-		else if (!accelerate.accelerating) {
+		else if (accelerate.accelerating && (input.x == 0)) {
+			while (moveSpeed > 10) {
+				moveSpeed = moveSpeed - 1;
+			}
+		}
+
+		// Decelerate player when in zone and moving
+		if (decelerate.decelerating && (input.x != 0) && moveSpeed > 5) {
+			moveSpeed = moveSpeed - 1;
+		}
+		else if (decelerate.decelerating && (input.x == 0)) {
+			while (moveSpeed < 10) {
+				moveSpeed = moveSpeed + 1;
+			}
+		}
+		else if (!decelerate.decelerating && !accelerate.accelerating) {
 			moveSpeed = 10;
+		}
+
+		if (!pause.isPaused && !levelAdvance.isWon) {
+			Time.timeScale = 1;
+		}
+		else {
+			Time.timeScale = 0;
 		}
 	}
 }

@@ -1,16 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class MenuScript : MonoBehaviour {
 
 	// Start game on press
-	public void StartGame() {
-		Application.LoadLevel ("platformer 1");
+	public void StartGame (string levelName) {
+		SceneManager.LoadScene (levelName);
 	}
 
 	// Quit game on press (doesn't function in unity editor)
-	public void ClickExit() {
+	public void ClickExit () {
 		Application.Quit ();
 	}
 }

@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PauseScript : MonoBehaviour {
 
@@ -8,27 +9,22 @@ public class PauseScript : MonoBehaviour {
 
 	public GameObject pauseMenuCanvas;
 
-	// Resume game on key hit
-	public void Resume() {
-		isPaused = false;
-	}
-
 	// Quit to main menu on press
 	public void QuitGame() {
-		Application.LoadLevel ("Main Menu");
+		SceneManager.LoadScene ("Main Menu");
 	}
 	
-	// Update is called once per frame
+
 	void Update () {
+		// Set canvas
 		if (isPaused) {
 			pauseMenuCanvas.SetActive (true);
-			Time.timeScale = 0;
 		} 
 		else {
 			pauseMenuCanvas.SetActive (false);
-			Time.timeScale = 1;
 		}
 
+		// Toggle if (un)paused or reset and unpause
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			isPaused = !isPaused;
 		}

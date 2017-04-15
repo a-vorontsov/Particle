@@ -19,7 +19,8 @@ public class AccelerateScript : MonoBehaviour {
 		}
 	}
 
-	void OnTriggerExit2D(Collider2D col){
+	// Reset acceleration
+	void OnTriggerExit2D (Collider2D col){
 		if (col.gameObject.name == "Player 1"){
 			accelerating = false;
 		}

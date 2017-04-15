@@ -12,9 +12,15 @@ public class TeleportScript : MonoBehaviour {
 
 	public bool teleporting;
 
-	void Start() {
+	void Start () {
 		teleporting = false;
 		countdownTimer = 0.1f;
+	}
+
+	void Update () {
+		if (!teleporting) {
+			countdownTimer = 0.1f;
+		}
 	}
 
 	// Detect if player has entered TP zone and change position
@@ -28,15 +34,20 @@ public class TeleportScript : MonoBehaviour {
 			//Teleport after timer drops below 0
 			else if (countdownTimer <= 0) {
 				player.transform.position = new Vector2 (destination.x, destination.y);
-				teleporting = false;
 			}
-		} 
+		}
 	}
 
 	// Reset timer on player exit
 	void OnTriggerExit2D (Collider2D col) {
-		if (col.gameObject == player) {
-			countdownTimer = 0.1f;
+		if (col.gameObject.name == "Player 1") {
+			if (countdownTimer > 0) {
+				countdownTimer -= Time.deltaTime;
+			}
+			//Teleport after timer drops below 0
+			else if (countdownTimer <= 0) {
+				teleporting = false;
+			}
 		}
 	}
 }
