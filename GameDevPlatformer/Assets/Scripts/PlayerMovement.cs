@@ -22,13 +22,14 @@ public class PlayerMovement : MonoBehaviour {
 
 	float accelerationTimeGrounded = 0.1f;
 	float accelerationTimeLanding = 0.3f;
+	float minMoveSpeed = 10;
 	float gravity;
 	float jumpVelocity;
-	float minMoveSpeed = 10;
 	float velocityXSmoothing;
 
 	AccelerateScript accelerate;
 	DecelerateScript decelerate;
+	SlipScript slipping;
 	Controller2D controller;
 	GameObject player;
 	SpriteRenderer renderer;
@@ -42,6 +43,7 @@ public class PlayerMovement : MonoBehaviour {
 		levelAdvance = GameObject.FindObjectOfType<LevelAdvanceScript> ();
 		accelerate = GameObject.FindObjectOfType<AccelerateScript> ();
 		decelerate = GameObject.FindObjectOfType<DecelerateScript> ();
+		slipping = GameObject.FindObjectOfType<SlipScript> ();
 		controller = GetComponent<Controller2D> ();
 		renderer = GetComponent<SpriteRenderer> ();
 		teleport = GameObject.FindObjectOfType<TeleportScript> ();
@@ -101,7 +103,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		bool wallSliding = false;
-		if ((controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
+		if (!slipping.slipping && (controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
 			wallSliding = true;
 
 			// Force vertical velocity limit

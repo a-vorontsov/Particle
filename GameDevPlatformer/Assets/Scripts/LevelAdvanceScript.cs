@@ -44,5 +44,10 @@ public class LevelAdvanceScript : MonoBehaviour {
 		if (isWon && Input.GetKeyDown (KeyCode.R)) {
 				isWon = false;
 		}
+
+		// Quit the game on key press
+		if (isWon && Input.GetKeyDown (KeyCode.Escape)) {
+				SceneManager.LoadScene ("Main Menu");
+		}
 	}
 }

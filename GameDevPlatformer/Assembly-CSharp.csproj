@@ -56,6 +56,7 @@
      <Compile Include="Assets\Scripts\PauseScript.cs" />
      <Compile Include="Assets\Scripts\PlayerMovement.cs" />
      <Compile Include="Assets\Scripts\RayCastController.cs" />
+     <Compile Include="Assets\Scripts\SlipScript.cs" />
      <Compile Include="Assets\Scripts\TeleportScript.cs" />
      <Compile Include="Assets\Scripts\TimerScript.cs" />
  <Reference Include="UnityEngine.UI">

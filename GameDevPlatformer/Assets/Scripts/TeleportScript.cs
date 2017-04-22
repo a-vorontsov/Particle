@@ -14,12 +14,12 @@ public class TeleportScript : MonoBehaviour {
 
 	void Start () {
 		teleporting = false;
-		countdownTimer = 0.1f;
+		countdownTimer = 0.5f;
 	}
 
 	void Update () {
 		if (!teleporting) {
-			countdownTimer = 0.1f;
+			countdownTimer = 0.05f;
 		}
 	}
 
