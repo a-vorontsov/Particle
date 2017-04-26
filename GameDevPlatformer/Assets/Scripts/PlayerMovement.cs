@@ -39,6 +39,7 @@ public class PlayerMovement : MonoBehaviour {
 	LevelAdvanceScript levelAdvance;
 
 	void Start () {
+		// Load dependencies from other scripts
 		pause = GameObject.FindObjectOfType<PauseScript> ();
 		levelAdvance = GameObject.FindObjectOfType<LevelAdvanceScript> ();
 		accelerate = GameObject.FindObjectOfType<AccelerateScript> ();
@@ -103,7 +104,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		bool wallSliding = false;
-		if (!slipping.slipping && (controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
+		if (Input.GetKey (KeyCode.Space) && !slipping.slipping && (controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
 			wallSliding = true;
 
 			// Force vertical velocity limit
@@ -131,20 +132,24 @@ public class PlayerMovement : MonoBehaviour {
 		// Jump input and check if wallsliding or if on ground
 		if (Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow)) {
 			if (wallSliding) {
+				// Drop off the wall
 				if (input.x == 0) {
 					velocity.x = -wallDirectionX * wallHop.x;
 					velocity.y = wallHop.y;
 				} 
+				// Leap off the wall
 				else if (input.x != wallDirectionX) {
 					velocity.x = -wallDirectionX * wallLeap.x;
 					velocity.y = wallLeap.y;
 				} 
+				// Hop up the wall
 				else if (input.x == wallDirectionX) {
 					velocity.x = -wallDirectionX * wallClimb.x;
 					velocity.y = wallClimb.y;
 				}
 			}
 
+			// Reset jump velocity when grounded
 			if (controller.collisions.below) {
 				velocity.y = jumpVelocity;
 			}
@@ -221,6 +226,7 @@ public class PlayerMovement : MonoBehaviour {
 			moveSpeed = 10;
 		}
 
+		// Stop time when level is complete
 		if (!pause.isPaused && !levelAdvance.isWon) {
 			Time.timeScale = 1;
 		}
