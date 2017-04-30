@@ -8,9 +8,10 @@ public class PauseScript : MonoBehaviour {
 	public bool isPaused;
 
 	public GameObject pauseMenuCanvas;
+	public GameObject settingsCanvas;
 
 	// Quit to main menu on press
-	public void QuitGame() {
+	public void QuitGame () {
 		SceneManager.LoadScene ("Main Menu");
 	}
 	
