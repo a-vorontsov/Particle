@@ -36,6 +36,7 @@ public class PlayerMovement : MonoBehaviour {
 	LevelAdvanceScript levelAdvance;
 	PauseScript pause;
 	SpriteRenderer renderer;
+	SlipScript slip;
 
 	void Start () {
 		// Load dependencies from other scripts
@@ -44,6 +45,7 @@ public class PlayerMovement : MonoBehaviour {
 		pause = GameObject.FindObjectOfType<PauseScript> ();
 		renderer = GetComponent<SpriteRenderer> ();
 		trail = GetComponent<TrailRenderer> ();
+		slip = GameObject.FindObjectOfType<SlipScript> ();
 
 		// Calculate gravity and jump strength
 		gravity = -(2 * jumpHeight) / Mathf.Pow (timeToJumpApex, 2);
@@ -98,7 +100,10 @@ public class PlayerMovement : MonoBehaviour {
 			}
 		}
 
-		if ((Input.GetKey (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow)) && (controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
+		if ((Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow)) 
+			&& (controller.collisions.left || controller.collisions.right) 
+			&& !controller.collisions.below && velocity.y < 0 
+			&& !slip.slipping) {
 			wallSliding = true;
 
 			// Force vertical velocity limit
@@ -124,7 +129,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// Jump input and check if wallsliding or if on ground
-		if (Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow)) {
+		if (Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow) && controller.collisions.below) {
 			if (wallSliding) {
 				// Drop off the wall
 				if (input.x == 0) {
