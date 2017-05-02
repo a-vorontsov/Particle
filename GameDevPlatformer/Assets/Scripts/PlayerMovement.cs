@@ -9,16 +9,19 @@ public class PlayerMovement : MonoBehaviour {
 	public float timeToGroundDecelerate;
 	public float timeToJumpApex = 0.3f;
 	public float timeToWallUnstick;
-	public float wallSlideSpeedMax = 0;
+	public float wallSlideSpeedMax = 0.1f;
 	public float wallStickTime = 0;
 	public float minYPosition;
 	public float moveSpeed;
+
+	public bool wallSliding = false;
 
 	public Vector2 spawnPoint;
 	public Vector2 velocity;
 	public Vector2 wallClimb;
 	public Vector2 wallHop;
 	public Vector2 wallLeap;
+	public Vector2 input;
 
 	float accelerationTimeGrounded = 0.1f;
 	float accelerationTimeLanding = 0.3f;
@@ -27,27 +30,19 @@ public class PlayerMovement : MonoBehaviour {
 	float jumpVelocity;
 	float velocityXSmoothing;
 
-	AccelerateScript accelerate;
-	DecelerateScript decelerate;
-	SlipScript slipping;
+	public TrailRenderer trail;
 	Controller2D controller;
 	GameObject player;
-	SpriteRenderer renderer;
-	TeleportScript teleport;
-	TrailRenderer trail;
-	PauseScript pause;
 	LevelAdvanceScript levelAdvance;
+	PauseScript pause;
+	SpriteRenderer renderer;
 
 	void Start () {
 		// Load dependencies from other scripts
-		pause = GameObject.FindObjectOfType<PauseScript> ();
-		levelAdvance = GameObject.FindObjectOfType<LevelAdvanceScript> ();
-		accelerate = GameObject.FindObjectOfType<AccelerateScript> ();
-		decelerate = GameObject.FindObjectOfType<DecelerateScript> ();
-		slipping = GameObject.FindObjectOfType<SlipScript> ();
 		controller = GetComponent<Controller2D> ();
+		levelAdvance = GameObject.FindObjectOfType<LevelAdvanceScript> ();
+		pause = GameObject.FindObjectOfType<PauseScript> ();
 		renderer = GetComponent<SpriteRenderer> ();
-		teleport = GameObject.FindObjectOfType<TeleportScript> ();
 		trail = GetComponent<TrailRenderer> ();
 
 		// Calculate gravity and jump strength
@@ -103,8 +98,7 @@ public class PlayerMovement : MonoBehaviour {
 			}
 		}
 
-		bool wallSliding = false;
-		if (Input.GetKey (KeyCode.Space) && !slipping.slipping && (controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
+		if ((Input.GetKey (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow)) && (controller.collisions.left || controller.collisions.right) && !controller.collisions.below && velocity.y < 0) {
 			wallSliding = true;
 
 			// Force vertical velocity limit
@@ -159,20 +153,19 @@ public class PlayerMovement : MonoBehaviour {
 		velocity.y += gravity * Time.deltaTime;
 		controller.Move (velocity * Time.deltaTime);
 
-		// Respawn player after falling 50 units below spawn or after pressing R
+		// Respawn player after falling below specified y value or after pressing R
 		if ((this.transform.position.y < (minYPosition)) || Input.GetKeyDown (KeyCode.R)) {
 			this.transform.position = spawnPoint;
 			// Reset velocity to prevent abuse
 			velocity.x = 0;
 			velocity.y = 0;
 			// Disable trail
-			teleport.teleporting = false;;
 			trail.time = 0;
 			this.renderer.enabled = true;
 		}
 
 		// Trail distance change on velocity change
-		if (velocity.x > 10 || velocity.x < -10  || velocity.y > 10 || velocity.y < -10) {
+		if (velocity.x > 20 || velocity.x < -20  || velocity.y > 20 || velocity.y < -20) {
 			trail.enabled = true;
 			if (trail.time < 0.25f) {
 				trail.time += 0.01f;
@@ -190,40 +183,6 @@ public class PlayerMovement : MonoBehaviour {
 			else {
 				trail.enabled = false;
 			}
-		}
-
-		// Make player (in)visible while teleporting
-		if (teleport.teleporting) {
-			this.renderer.enabled = false;
-			trail.time = 0;
-			velocity.x = 0;
-		} 
-		else if (!teleport.teleporting) {
-			this.renderer.enabled = true;
-			trail.enabled = true;
-		}
-
-		// Accelerate player when in zone and moving
-		if (accelerate.accelerating && (input.x != 0)) {
-			moveSpeed = moveSpeed + 1;
-		}
-		else if (accelerate.accelerating && (input.x == 0)) {
-			while (moveSpeed > 10) {
-				moveSpeed = moveSpeed - 1;
-			}
-		}
-
-		// Decelerate player when in zone and moving
-		if (decelerate.decelerating && (input.x != 0) && moveSpeed > 5) {
-			moveSpeed = moveSpeed - 1;
-		}
-		else if (decelerate.decelerating && (input.x == 0)) {
-			while (moveSpeed < 10) {
-				moveSpeed = moveSpeed + 1;
-			}
-		}
-		else if (!decelerate.decelerating && !accelerate.accelerating) {
-			moveSpeed = 10;
 		}
 
 		// Stop time when level is complete

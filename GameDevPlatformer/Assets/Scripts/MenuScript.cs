@@ -25,7 +25,7 @@ public class MenuScript : MonoBehaviour {
 	public AudioSource musicSource;
 	public AudioSource fxSource;
 
-	int activeResIndex;
+	public int activeResIndex;
 
 	// Force add listeners to objects
 	void OnEnable () {
@@ -34,8 +34,9 @@ public class MenuScript : MonoBehaviour {
 		masterSlider.onValueChanged.AddListener (delegate {OnVolumeChange();});
 		musicSlider.onValueChanged.AddListener (delegate {OnVolumeChange();});
 		fxSlider.onValueChanged.AddListener (delegate {OnVolumeChange();});
+
 		activeResIndex = PlayerPrefs.GetInt ("screen res");
-		bool fullScreen = (PlayerPrefs.GetInt ("fullscreen") == 1) ? true : false;
+		fullScreen = (PlayerPrefs.GetInt ("fullscreen") == 1) ? true : false;
 		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat ("master volume");
 		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat ("music volume");
 		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat ("effects volume");
@@ -47,6 +48,7 @@ public class MenuScript : MonoBehaviour {
 		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat ("master volume");
 		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat ("music volume");
 		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat ("effects volume");
+
 		mainMenuCanvas.SetActive (true);
 		settingsCanvas.SetActive (false);
 		selectLevelCanvas.SetActive (false);
@@ -56,6 +58,7 @@ public class MenuScript : MonoBehaviour {
 	// Toggle fullscreen
 	public void OnFullScreenToggle () {
 		Screen.fullScreen = fullScreenToggle.isOn;
+
 		PlayerPrefs.SetInt ("fullscreen", ((fullScreen) ? 1 : 0));
 		PlayerPrefs.Save ();
 	}
@@ -94,6 +97,12 @@ public class MenuScript : MonoBehaviour {
 		settingsCanvas.SetActive (true);
 		mainMenuCanvas.SetActive(false);
 		selectLevelCanvas.SetActive (false);
+
+		activeResIndex = PlayerPrefs.GetInt ("screen res");
+		fullScreen = (PlayerPrefs.GetInt ("fullscreen") == 1) ? true : false;
+		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat ("master volume");
+		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat ("music volume");
+		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat ("effects volume");
 	}
 
 	public void BackButton () {

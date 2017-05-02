@@ -10,23 +10,16 @@ public class TeleportScript : MonoBehaviour {
 
 	public float countdownTimer;
 
-	public bool teleporting;
+	PlayerMovement velocity;
 
 	void Start () {
-		teleporting = false;
-		countdownTimer = 0.5f;
-	}
-
-	void Update () {
-		if (!teleporting) {
-			countdownTimer = 0.05f;
-		}
+		velocity = GameObject.FindObjectOfType<PlayerMovement> ();
+		countdownTimer = 0.05f;
 	}
 
 	// Detect if player has entered TP zone and change position
-	void OnTriggerStay2D (Collider2D col){
+	void OnTriggerStay2D (Collider2D col) {
 		if (col.gameObject.name == "Player 1") {
-			teleporting = true;
 			// Begin timer
 			if (countdownTimer > 0) {
 				countdownTimer -= Time.deltaTime;
@@ -34,6 +27,9 @@ public class TeleportScript : MonoBehaviour {
 			//Teleport after timer drops below 0
 			else if (countdownTimer <= 0) {
 				player.transform.position = new Vector2 (destination.x, destination.y);
+				velocity.velocity.x = 0;
+				velocity.velocity.y = 0;
+				velocity.trail.time = 0;
 			}
 		}
 	}
@@ -41,13 +37,7 @@ public class TeleportScript : MonoBehaviour {
 	// Reset timer on player exit
 	void OnTriggerExit2D (Collider2D col) {
 		if (col.gameObject.name == "Player 1") {
-			if (countdownTimer > 0) {
-				countdownTimer -= Time.deltaTime;
-			}
-			//Teleport after timer drops below 0
-			else if (countdownTimer <= 0) {
-				teleporting = false;
-			}
+			countdownTimer = 0.05f;
 		}
 	}
 }

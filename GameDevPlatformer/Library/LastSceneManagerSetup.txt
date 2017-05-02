@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Stages/platformer 2.unity
+- path: Assets/Stages/Main Menu.unity
   isLoaded: 1
   isActive: 1
