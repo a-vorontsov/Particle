@@ -42,6 +42,7 @@ public class MenuScript : MonoBehaviour {
 		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat ("effects volume");
 	}
 
+	// Get player preferences
 	void Start () {
 		activeResIndex = PlayerPrefs.GetInt ("screen res");
 		bool fullScreen = (PlayerPrefs.GetInt ("fullscreen") == 1) ? true : false;

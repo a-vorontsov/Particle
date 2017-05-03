@@ -24,6 +24,7 @@ public class RayCastController : MonoBehaviour {
 		CalculateRaySpacing ();
 	}
 
+	// Creates and updates rays per frame
 	public void UpdateRaycastOrigins(){
 		Bounds bounds = collider.bounds;
 		bounds.Expand (skinWidth * -2);
@@ -34,6 +35,7 @@ public class RayCastController : MonoBehaviour {
 		raycastOrigins.topRight = new Vector2 (bounds.max.x, bounds.max.y);
 	}
 
+	// Calculates the spacing between each ray
 	public void CalculateRaySpacing(){
 		Bounds bounds = collider.bounds;
 		bounds.Expand (skinWidth * -2);

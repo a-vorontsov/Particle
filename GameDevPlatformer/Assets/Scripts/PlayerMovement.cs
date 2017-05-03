@@ -31,6 +31,7 @@ public class PlayerMovement : MonoBehaviour {
 	float velocityXSmoothing;
 
 	public TrailRenderer trail;
+	
 	Controller2D controller;
 	GameObject player;
 	LevelAdvanceScript levelAdvance;
@@ -100,7 +101,8 @@ public class PlayerMovement : MonoBehaviour {
 			}
 		}
 
-		if ((Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow)) 
+		// Detect if player can wallslide
+		if ((Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown (KeyCode.UpArrow)) 
 			&& (controller.collisions.left || controller.collisions.right) 
 			&& !controller.collisions.below && velocity.y < 0 
 			&& !slip.slipping) {
