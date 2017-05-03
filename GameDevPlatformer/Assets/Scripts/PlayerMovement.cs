@@ -62,7 +62,7 @@ public class PlayerMovement : MonoBehaviour {
 		// Reduce horizontal acceleration on ground after waiting
 		if (controller.collisions.below) {
 			if (input.x == 1) {
-				velocity.x += 100 * Mathf.Pow(Time.deltaTime, 2);
+				velocity.x += (100 * Mathf.Pow(Time.deltaTime, 2));
 			} 
 			else if (input.x == -1) {
 				velocity.x -= (100 * Mathf.Pow(Time.deltaTime, 2));
@@ -110,6 +110,10 @@ public class PlayerMovement : MonoBehaviour {
 			if (velocity.y < -wallSlideSpeedMax) {
 				velocity.y = wallSlideSpeedMax;
 			}
+		}
+
+		else {
+			wallSliding = false;
 		}
 
 		// Stop gravity build up while grounded and decelerate fast
