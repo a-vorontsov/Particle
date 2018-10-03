@@ -6,16 +6,15 @@ public class AccelerateScript : MonoBehaviour {
 
 	PlayerMovement player;
 
-	void Start () {
+	void Start() {
 		player = GameObject.FindObjectOfType<PlayerMovement> ();
 	}
 	
 	// Detect if player has entered the acceleration zone
-	void OnTriggerStay2D (Collider2D col) {
+	void OnTriggerStay2D(Collider2D col) {
 		if (col.gameObject.name == "Player 1") {
 			player.moveSpeed += 0.5f;
-		}
-		else if (col.gameObject.name == "Player 1") {
+		} else if (col.gameObject.name == "Player 1") {
 			while (player.moveSpeed > 10) {
 				player.moveSpeed -= 1;
 			}
@@ -23,7 +22,7 @@ public class AccelerateScript : MonoBehaviour {
 	}
 
 	// Reset acceleration
-	void OnTriggerExit2D (Collider2D col){
+	void OnTriggerExit2D(Collider2D col){
 		if (col.gameObject.name == "Player 1") {
 			player.moveSpeed = 10;
 		}

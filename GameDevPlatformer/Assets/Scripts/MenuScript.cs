@@ -28,98 +28,98 @@ public class MenuScript : MonoBehaviour {
 	public int activeResIndex;
 
 	// Force add listeners to objects
-	void OnEnable () {
-		fullScreenToggle.onValueChanged.AddListener (delegate {OnFullScreenToggle ();});
-		resolutionDropdown.onValueChanged.AddListener (delegate {OnResolutionChange (resolutionDropdown.value);});
-		masterSlider.onValueChanged.AddListener (delegate {OnVolumeChange();});
-		musicSlider.onValueChanged.AddListener (delegate {OnVolumeChange();});
-		fxSlider.onValueChanged.AddListener (delegate {OnVolumeChange();});
+	void OnEnable() {
+		fullScreenToggle.onValueChanged.AddListener(delegate {OnFullScreenToggle()});
+		resolutionDropdown.onValueChanged.AddListener(delegate {OnResolutionChange(resolutionDropdown.value)});
+		masterSlider.onValueChanged.AddListener(delegate {OnVolumeChange()});
+		musicSlider.onValueChanged.AddListener(delegate {OnVolumeChange()});
+		fxSlider.onValueChanged.AddListener(delegate {OnVolumeChange()});
 
-		activeResIndex = PlayerPrefs.GetInt ("screen res");
-		fullScreen = (PlayerPrefs.GetInt ("fullscreen") == 1) ? true : false;
-		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat ("master volume");
-		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat ("music volume");
-		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat ("effects volume");
+		activeResIndex = PlayerPrefs.GetInt("screen res");
+		fullScreen = (PlayerPrefs.GetInt("fullscreen") == 1) ? true : false;
+		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat("master volume");
+		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat("music volume");
+		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat("effects volume");
 	}
 
 	// Get player preferences
-	void Start () {
-		activeResIndex = PlayerPrefs.GetInt ("screen res");
-		bool fullScreen = (PlayerPrefs.GetInt ("fullscreen") == 1) ? true : false;
-		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat ("master volume");
-		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat ("music volume");
-		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat ("effects volume");
+	void Start() {
+		activeResIndex = PlayerPrefs.GetInt("screen res");
+		bool fullScreen = (PlayerPrefs.GetInt("fullscreen") == 1) ? true : false;
+		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat("master volume");
+		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat("music volume");
+		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat("effects volume");
 
-		mainMenuCanvas.SetActive (true);
-		settingsCanvas.SetActive (false);
-		selectLevelCanvas.SetActive (false);
+		mainMenuCanvas.SetActive(true);
+		settingsCanvas.SetActive(false);
+		selectLevelCanvas.SetActive(false);
 		activeResIndex = resolutionDropdown.value;
 	}
 
 	// Toggle fullscreen
-	public void OnFullScreenToggle () {
+	public void OnFullScreenToggle() {
 		Screen.fullScreen = fullScreenToggle.isOn;
 
-		PlayerPrefs.SetInt ("fullscreen", ((fullScreen) ? 1 : 0));
-		PlayerPrefs.Save ();
+		PlayerPrefs.SetInt("fullscreen", ((fullScreen) ? 1 : 0));
+		PlayerPrefs.Save();
 	}
 
 	// Change resolution
-	public void OnResolutionChange (int activeResIndex) {
+	public void OnResolutionChange(int activeResIndex) {
 		Screen.SetResolution(screenWidths[resolutionDropdown.value], screenHeights[resolutionDropdown.value], Screen.fullScreen);
-		PlayerPrefs.SetInt ("screen res", activeResIndex);
-		PlayerPrefs.Save ();
+		PlayerPrefs.SetInt("screen res", activeResIndex);
+		PlayerPrefs.Save();
 	}
 
 	// Change volume
-	public void OnVolumeChange () {
+	public void OnVolumeChange() {
 		AudioListener.volume = masterSlider.value;
-		PlayerPrefs.SetFloat ("master volume", masterSlider.value);
+		PlayerPrefs.SetFloat("master volume", masterSlider.value);
 		musicSource.volume = musicSlider.value;
-		PlayerPrefs.SetFloat ("music volume", musicSlider.value);
+		PlayerPrefs.SetFloat("music volume", musicSlider.value);
 		fxSource.volume = fxSlider.value;
-		PlayerPrefs.SetFloat ("effects volume", fxSlider.value);
+		PlayerPrefs.SetFloat("effects volume", fxSlider.value);
 		PlayerPrefs.Save ();
 	}
 
 	// Start game on press
-	public void StartGame (string levelName) {
-		SceneManager.LoadScene (levelName);
+	public void StartGame(string levelName) {
+		SceneManager.LoadScene(levelName);
 	}
 
 	// Changes the active canvas
-	public void SelectLevelCanvas () {
-		selectLevelCanvas.SetActive (true);
+	public void SelectLevelCanvas() {
+		selectLevelCanvas.SetActive(true);
 		mainMenuCanvas.SetActive(false);
-		settingsCanvas.SetActive (false);
+		settingsCanvas.SetActive(false);
 	}
 
-	public void SettingsCanvas () {
-		settingsCanvas.SetActive (true);
+	public void SettingsCanvas() {
+		settingsCanvas.SetActive(true);
 		mainMenuCanvas.SetActive(false);
 		selectLevelCanvas.SetActive (false);
 
-		activeResIndex = PlayerPrefs.GetInt ("screen res");
-		fullScreen = (PlayerPrefs.GetInt ("fullscreen") == 1) ? true : false;
-		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat ("master volume");
-		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat ("music volume");
-		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat ("effects volume");
+		activeResIndex = PlayerPrefs.GetInt("screen res");
+		fullScreen = (PlayerPrefs.GetInt("fullscreen") == 1) ? true : false;
+		AudioListener.volume = masterSlider.value = PlayerPrefs.GetFloat("master volume");
+		musicSource.volume = musicSlider.value = PlayerPrefs.GetFloat("music volume");
+		fxSource.volume = fxSlider.value = PlayerPrefs.GetFloat("effects volume");
 	}
 
-	public void BackButton () {
-		mainMenuCanvas.SetActive (true);
-		settingsCanvas.SetActive (false);
-		selectLevelCanvas.SetActive (false);
+	public void BackButton() {
+		mainMenuCanvas.SetActive(true);
+		settingsCanvas.SetActive(false);
+		selectLevelCanvas.SetActive(false);
 	}
 
 	// Play sound on click
-	public void ClickSound () {
-		fxSource.Play ();
+	public void ClickSound() {
+		fxSource.Play();
 	}
 
 	// Quit game on press (doesn't function in unity editor)
-	public void ClickExit () {
-		Application.Quit ();
+	public void ClickExit() {
+		Application.Quit();
 		PlayerPrefs.Save();
 	}
 }
