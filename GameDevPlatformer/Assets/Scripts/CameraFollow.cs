@@ -28,29 +28,26 @@ public class CameraFollow : MonoBehaviour {
 	bool lookAheadStop;
 
 	void Start() {
-		focusArea = new FocusArea (target.collider.bounds, focusAreaSize);
+		focusArea = new FocusArea(target.collider.bounds, focusAreaSize);
 	}
 
 	void LateUpdate() {
-		focusArea.Update (target.collider.bounds);
+		focusArea.Update(target.collider.bounds);
 		Vector2 focusPosition = focusArea.centre + Vector2.up * verticalOffset;
 
 		if (focusArea.velocity.x != 0) {
-			lookAheadDirectionX = Mathf.Sign (focusArea.velocity.x);
-			if (Mathf.Sign (target.playerInput.x) == Mathf.Sign (focusArea.velocity.x) && target.playerInput.x != 0) {
+			lookAheadDirectionX = Mathf.Sign(focusArea.velocity.x);
+			if (Mathf.Sign(target.playerInput.x) == Mathf.Sign(focusArea.velocity.x) && target.playerInput.x != 0) {
 				lookAheadStop = false;
 				targetLookAheadX = lookAheadDirectionX * lookAheadDistanceX;
-			} 
-			else {
-				if (!lookAheadStop) {
-					lookAheadStop = true;
-					targetLookAheadX = currentLookAheadX + (lookAheadDirectionX * lookAheadDistanceX - currentLookAheadX) / 4f;
-				}
+			} else if (!lookAheadStop) {
+				lookAheadStop = true;
+				targetLookAheadX = currentLookAheadX + (lookAheadDirectionX * lookAheadDistanceX - currentLookAheadX) / 4f;
 			}
 		}
-		currentLookAheadX = Mathf.SmoothDamp (currentLookAheadX, targetLookAheadX, ref smoothLookVelocityX, lookSmoothTimeX);
+		currentLookAheadX = Mathf.SmoothDamp(currentLookAheadX, targetLookAheadX, ref smoothLookVelocityX, lookSmoothTimeX);
 
-		focusPosition.y = Mathf.SmoothDamp (transform.position.y, focusPosition.y, ref smoothVelocityY, verticalSmoothTime);
+		focusPosition.y = Mathf.SmoothDamp(transform.position.y, focusPosition.y, ref smoothVelocityY, verticalSmoothTime);
 		focusPosition += Vector2.right * currentLookAheadX;
 
 		transform.position = (Vector3)focusPosition + Vector3.forward * -10;
@@ -87,8 +84,7 @@ public class CameraFollow : MonoBehaviour {
 
 			if (targetBounds.min.x < left) {
 				shiftX = targetBounds.min.x - left;
-			} 
-			else if (targetBounds.max.x > right) {
+			} else if (targetBounds.max.x > right) {
 				shiftX = targetBounds.max.x - right;
 			}
 
@@ -99,15 +95,14 @@ public class CameraFollow : MonoBehaviour {
 
 			if (targetBounds.min.y < bottom) {
 				shiftY = targetBounds.min.y - bottom;
-			} 
-			else if (targetBounds.max.y > top) {
+			} else if (targetBounds.max.y > top) {
 				shiftY = targetBounds.max.y - top;
 			}
 
 			top += shiftY;
 			bottom += shiftY;
 			centre = new Vector2((left+right)/2,(top +bottom)/2);
-			velocity = new Vector2 (shiftX, shiftY);
+			velocity = new Vector2(shiftX, shiftY);
 		}
 	}
 }

@@ -11,26 +11,24 @@ public class PauseScript : MonoBehaviour {
 	public GameObject settingsCanvas;
 
 	// Quit to main menu on press
-	public void QuitGame () {
-		SceneManager.LoadScene ("Main Menu");
+	public void QuitGame() {
+		SceneManager.LoadScene("Main Menu");
 	}
 	
 
-	void Update () {
+	void Update() {
 		// Set canvas
 		if (isPaused) {
-			pauseMenuCanvas.SetActive (true);
-		} 
-		else {
-			pauseMenuCanvas.SetActive (false);
+			pauseMenuCanvas.SetActive(true);
+		} else {
+			pauseMenuCanvas.SetActive(false);
 		}
 
 		// Toggle if (un)paused or reset and unpause
-		if (Input.GetKeyDown (KeyCode.Escape)) {
+		if (Input.GetKeyDown(KeyCode.Escape)) {
 			isPaused = !isPaused;
-		}
-		else if (isPaused && Input.GetKeyDown (KeyCode.R)) {
-				isPaused = false;
+		} else if (isPaused && Input.GetKeyDown(KeyCode.R)) {
+			isPaused = false;
 		}
 	}
 }

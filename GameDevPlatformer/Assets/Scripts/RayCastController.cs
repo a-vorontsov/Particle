@@ -17,31 +17,31 @@ public class RayCastController : MonoBehaviour {
 	public float verticalRaySpacing;
 
 	public virtual void Awake() {
-		collider = GetComponent<BoxCollider2D> ();
+		collider = GetComponent<BoxCollider2D>();
 	}
 
 	public virtual void Start() {
-		CalculateRaySpacing ();
+		CalculateRaySpacing();
 	}
 
 	// Creates and updates rays per frame
 	public void UpdateRaycastOrigins(){
 		Bounds bounds = collider.bounds;
-		bounds.Expand (skinWidth * -2);
+		bounds.Expand(skinWidth * -2);
 
-		raycastOrigins.bottomLeft = new Vector2 (bounds.min.x, bounds.min.y);
-		raycastOrigins.bottomRight = new Vector2 (bounds.max.x, bounds.min.y);
-		raycastOrigins.topLeft = new Vector2 (bounds.min.x, bounds.max.y);
-		raycastOrigins.topRight = new Vector2 (bounds.max.x, bounds.max.y);
+		raycastOrigins.bottomLeft = new Vector2(bounds.min.x, bounds.min.y);
+		raycastOrigins.bottomRight = new Vector2(bounds.max.x, bounds.min.y);
+		raycastOrigins.topLeft = new Vector2(bounds.min.x, bounds.max.y);
+		raycastOrigins.topRight = new Vector2(bounds.max.x, bounds.max.y);
 	}
 
 	// Calculates the spacing between each ray
 	public void CalculateRaySpacing(){
 		Bounds bounds = collider.bounds;
-		bounds.Expand (skinWidth * -2);
+		bounds.Expand(skinWidth * -2);
 
-		horizontalRayCount = Mathf.Clamp (horizontalRayCount, 2, int.MaxValue);
-		verticalRayCount = Mathf.Clamp (verticalRayCount, 2, int.MaxValue);
+		horizontalRayCount = Mathf.Clamp(horizontalRayCount, 2, int.MaxValue);
+		verticalRayCount = Mathf.Clamp(verticalRayCount, 2, int.MaxValue);
 
 		horizontalRaySpacing = bounds.size.y / (horizontalRayCount - 1);
 		verticalRaySpacing = bounds.size.x / (verticalRayCount - 1);

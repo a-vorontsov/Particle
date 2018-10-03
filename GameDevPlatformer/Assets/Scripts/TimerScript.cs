@@ -9,27 +9,30 @@ public class TimerScript : MonoBehaviour {
 
     float initialTime;
 
-    bool TimerStart = false;
-    bool FirstPress = true;
+    bool timerStart = false;
+    bool firstPress = true;
 
-	void Start () {
+	void Start() {
 	}
 
-    void Update () {
+    void Update() {
         float time = 0;
         string minutes = ((int)time / 60).ToString();
         string seconds = (time % 60).ToString("f2");
 
 		// Detect if player has moved horizontally
-		if (Input.GetKeyDown(KeyCode.LeftArrow)  || Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.D)) {
-            if (FirstPress) {
-                TimerStart = true;
+		if (Input.GetKeyDown(KeyCode.LeftArrow)
+            || Input.GetKeyDown(KeyCode.RightArrow)
+            || Input.GetKeyDown(KeyCode.A)
+            || Input.GetKeyDown(KeyCode.D)) {
+            if (firstPress) {
+                timerStart = true;
                 initialTime = Time.time;
             }
-            FirstPress = false;
+            firstPress = false;
         }
 
-        if (TimerStart) {
+        if (timerStart) {
             time = Time.time - initialTime;
             minutes = ((int)time / 60).ToString();
             seconds = (time % 60).ToString("f2");
@@ -37,9 +40,9 @@ public class TimerScript : MonoBehaviour {
         }
         timer.text = minutes + ":" + seconds;
 
-		if (Input.GetKeyDown (KeyCode.R)) {
-			TimerStart = false;
-			FirstPress = true;
+		if (Input.GetKeyDown(KeyCode.R)) {
+			timerStart = false;
+			firstPress = true;
 			time = 0;
 		}
     }
