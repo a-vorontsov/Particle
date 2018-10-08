@@ -126,7 +126,7 @@ public class PlayerMovement : MonoBehaviour {
 		}
 
 		// Jump input and check if wallsliding or if on ground
-		if (Input.GetKeyDown (KeyCode.Space) || Input.GetKeyDown (KeyCode.UpArrow) && controller.collisions.below) {
+		if (Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.UpArrow) && controller.collisions.below) {
 			if (wallSliding) {
 				if (input.x == 0) {
 					velocity.x = -wallDirectionX * wallHop.x;
@@ -148,7 +148,7 @@ public class PlayerMovement : MonoBehaviour {
 
 		// Make Player move
 		velocity.y += gravity * Time.deltaTime;
-		controller.Move (velocity * Time.deltaTime);
+		controller.Move(velocity * Time.deltaTime);
 
 		// Respawn player after falling below specified y value or after pressing R
 		if ((this.transform.position.y < (minYPosition)) || Input.GetKeyDown(KeyCode.R)) {
