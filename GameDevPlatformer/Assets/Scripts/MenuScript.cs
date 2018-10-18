@@ -29,11 +29,11 @@ public class MenuScript : MonoBehaviour {
 
 	// Force add listeners to objects
 	void OnEnable() {
-		fullScreenToggle.onValueChanged.AddListener(delegate {OnFullScreenToggle()});
-		resolutionDropdown.onValueChanged.AddListener(delegate {OnResolutionChange(resolutionDropdown.value)});
-		masterSlider.onValueChanged.AddListener(delegate {OnVolumeChange()});
-		musicSlider.onValueChanged.AddListener(delegate {OnVolumeChange()});
-		fxSlider.onValueChanged.AddListener(delegate {OnVolumeChange()});
+		fullScreenToggle.onValueChanged.AddListener(delegate {OnFullScreenToggle();});
+		resolutionDropdown.onValueChanged.AddListener(delegate {OnResolutionChange(resolutionDropdown.value);});
+		masterSlider.onValueChanged.AddListener(delegate {OnVolumeChange();});
+		musicSlider.onValueChanged.AddListener(delegate {OnVolumeChange();});
+		fxSlider.onValueChanged.AddListener(delegate {OnVolumeChange();});
 
 		activeResIndex = PlayerPrefs.GetInt("screen res");
 		fullScreen = (PlayerPrefs.GetInt("fullscreen") == 1) ? true : false;
